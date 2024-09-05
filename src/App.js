@@ -12,6 +12,7 @@ function App() {
   const [timeLeft, setTimeLeft] = useState(1200); // 20 minutes in seconds
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [timeTaken, setTimeTaken] = useState(0);
+  const [hasWarned, setHasWarned] = useState(false); // Track if 5-minute warning has been shown
   const textareaRef = useRef(null);
   const timerRef = useRef(null);
 
@@ -29,6 +30,7 @@ function App() {
     setTimeLeft(1200); // Reset timer
     setIsTimerRunning(true); // Start timer
     setTimeTaken(0);
+    setHasWarned(false); // Reset warning state
   };
 
   const handleTypingChange = (e) => {
@@ -101,8 +103,9 @@ function App() {
             handleSubmit();
             return 0;
           }
-          if (prevTime <= 300) {
+          if (prevTime <= 300 && !hasWarned) {
             toast.warning('Only 5 minutes left, hurry up!');
+            setHasWarned(true); // Ensure the warning is shown only once
           }
           return prevTime - 1;
         });
@@ -110,7 +113,7 @@ function App() {
     }
 
     return () => clearInterval(timerRef.current);
-  }, [isTimerRunning]);
+  }, [isTimerRunning, hasWarned]);
 
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);

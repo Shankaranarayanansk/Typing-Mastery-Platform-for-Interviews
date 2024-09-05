@@ -147,6 +147,13 @@ button:disabled {
 .word-check .typed {
   flex: 1;
 }
+.text-to-type span.correct {
+  color: green;
+}
+
+.text-to-type span.incorrect {
+  color: red;
+}
 
 /* Toaster customization */
 :root {
