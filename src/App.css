@@ -1,0 +1,54 @@
+.App {
+  text-align: center;
+  margin: 20px;
+}
+
+.typing-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.text-to-type {
+  border: 1px solid #ccc;
+  padding: 10px;
+  width: 80%;
+  margin-bottom: 10px;
+  white-space: pre-wrap;
+  text-align: left;
+}
+
+.typing-area textarea {
+  width: 80%;
+  height: 100px;
+  padding: 10px;
+}
+
+.correct {
+  color: green;
+  font-weight: bold;
+}
+
+.incorrect {
+  color: red;
+  font-weight: bold;
+}
+
+.result {
+  margin-top: 20px;
+}
+
+.result ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.result li {
+  margin: 5px 0;
+}
+
+.timer {
+  font-size: 1.5em;
+  margin-bottom: 20px;
+}
