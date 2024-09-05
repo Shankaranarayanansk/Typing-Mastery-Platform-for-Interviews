@@ -8,8 +8,6 @@ function App() {
   const [wordList, setWordList] = useState('');
   const [wordArray, setWordArray] = useState([]);
   const [wordStatus, setWordStatus] = useState([]);
-  const [result, setResult] = useState(null);
-  const [score, setScore] = useState(10);
   const [timeLeft, setTimeLeft] = useState(1200); // 20 minutes in seconds
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const textareaRef = useRef(null);
@@ -25,8 +23,6 @@ function App() {
     setInputText(words);
     setTypedText('');
     setWordStatus(new Array(words.split(' ').length).fill(''));
-    setResult(null);
-    setScore(10);
     setTimeLeft(1200); // Reset timer
     setIsTimerRunning(true); // Start timer
   };
@@ -39,38 +35,15 @@ function App() {
     const updatedStatus = wordArray.map((word, index) => {
       if (typedWords[index] === word) return 'correct';
       if (typedWords[index] !== undefined) return 'incorrect';
-      return '';
+      return 'missing';
     });
 
     setWordStatus(updatedStatus);
-
-    const incorrectWordsCount = updatedStatus.filter(status => status === 'incorrect').length;
-    setScore(Math.max(10 - 0.1 * incorrectWordsCount, 0).toFixed(1));
-  };
-
-  const handleSubmit = () => {
-    const correctCount = wordStatus.filter(status => status === 'correct').length;
-    const totalWords = wordArray.length;
-    const finalScore = Math.min(Math.floor((correctCount / totalWords) * 10), 10); // Calculate score out of 10
-    setResult(finalScore);
-    setIsTimerRunning(false); // Stop timer
   };
 
   const handlePaste = (e) => {
     e.preventDefault();
     toast.error('Pasting text is disabled in this typing area.');
-  };
-
-  const handleKeyDown = (e) => {
-    if (e.key === 'Backspace') {
-      e.preventDefault();
-      const currentValue = textareaRef.current.value;
-      const cursorPos = textareaRef.current.selectionStart;
-      const newValue = currentValue.slice(0, cursorPos - 1) + currentValue.slice(cursorPos);
-      setTypedText(newValue);
-      textareaRef.current.focus();
-      setScore(prevScore => Math.max(prevScore - 0.1, 0).toFixed(1));
-    }
   };
 
   useEffect(() => {
@@ -83,11 +56,10 @@ function App() {
   useEffect(() => {
     if (isTimerRunning) {
       timerRef.current = setInterval(() => {
-        setTimeLeft(prevTime => {
+        setTimeLeft((prevTime) => {
           if (prevTime <= 0) {
             clearInterval(timerRef.current);
             setIsTimerRunning(false);
-            handleSubmit();
             return 0;
           }
           if (prevTime <= 300) {
@@ -109,51 +81,34 @@ function App() {
 
   return (
     <div className="App">
-      <Toaster position="top-right" expand={true} richColors   />
+      <Toaster position="top-right" expand={true} richColors />
       <h1>Typing Practice</h1>
-      <div className="timer">
-        Time Left: {formatTime(timeLeft)}
-      </div>
+      <div className="timer">Time Left: {formatTime(timeLeft)}</div>
       <textarea
         placeholder="Enter up to 400 words here..."
         value={wordList}
         onChange={handleWordListChange}
       />
       <button onClick={handleGenerateText}>Generate Text</button>
-      <div className="typing-area">
-        <p className="text-to-type">
+      <div className="typing-container">
+        <div className="text-to-type">
           {inputText.split(' ').map((word, index) => (
             <span
               key={index}
-              className={wordStatus[index] === 'correct' ? 'correct' : (wordStatus[index] === 'incorrect' ? 'incorrect' : '')}
+              className={wordStatus[index]}
             >
-              {word}
-              {' '}
+              {word}{' '}
             </span>
           ))}
-        </p>
+        </div>
         <textarea
+          className="typing-area"
           placeholder="Start typing here..."
           value={typedText}
           onChange={handleTypingChange}
           ref={textareaRef}
-          onKeyDown={handleKeyDown}
         />
-        <button onClick={handleSubmit} disabled={!isTimerRunning}>Submit</button>
       </div>
-      {result !== null && (
-        <div className="result">
-          <h2>Your score: {result} out of 10</h2>
-          <h3>Detailed Reasons:</h3>
-          <ul>
-            {wordStatus.map((status, index) => (
-              <li key={index}>
-                Word "{wordArray[index]}": {status === 'correct' ? 'Correct' : 'Incorrect'}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
     </div>
   );
 }
