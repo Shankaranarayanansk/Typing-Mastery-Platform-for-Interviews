@@ -8,8 +8,10 @@ function App() {
   const [wordList, setWordList] = useState('');
   const [wordArray, setWordArray] = useState([]);
   const [wordStatus, setWordStatus] = useState([]);
+  const [result, setResult] = useState(null);
   const [timeLeft, setTimeLeft] = useState(1200); // 20 minutes in seconds
   const [isTimerRunning, setIsTimerRunning] = useState(false);
+  const [timeTaken, setTimeTaken] = useState(0);
   const textareaRef = useRef(null);
   const timerRef = useRef(null);
 
@@ -23,8 +25,10 @@ function App() {
     setInputText(words);
     setTypedText('');
     setWordStatus(new Array(words.split(' ').length).fill(''));
+    setResult(null);
     setTimeLeft(1200); // Reset timer
     setIsTimerRunning(true); // Start timer
+    setTimeTaken(0);
   };
 
   const handleTypingChange = (e) => {
@@ -34,16 +38,50 @@ function App() {
     const typedWords = text.split(/\s+/);
     const updatedStatus = wordArray.map((word, index) => {
       if (typedWords[index] === word) return 'correct';
-      if (typedWords[index] !== undefined) return 'incorrect';
-      return 'missing';
+      if (typedWords[index] !== undefined) {
+        if (typedWords[index].length === word.length) {
+          let mismatches = 0;
+          for (let i = 0; i < word.length; i++) {
+            if (typedWords[index][i] !== word[i]) {
+              mismatches++;
+            }
+          }
+          return mismatches > 2 ? 'incorrect' : 'spelling-mistake';
+        }
+        return 'incorrect';
+      }
+      return '';
     });
 
     setWordStatus(updatedStatus);
   };
 
+  const handleSubmit = () => {
+    const mismatchCount = wordStatus.filter(status => status === 'incorrect').length;
+    const spellingMistakeCount = wordStatus.filter(status => status === 'spelling-mistake').length;
+
+    setResult({
+      mismatchCount,
+      spellingMistakeCount,
+      timeTaken: 1200 - timeLeft,
+    });
+    setIsTimerRunning(false); // Stop timer
+  };
+
   const handlePaste = (e) => {
     e.preventDefault();
     toast.error('Pasting text is disabled in this typing area.');
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Backspace') {
+      e.preventDefault();
+      const currentValue = textareaRef.current.value;
+      const cursorPos = textareaRef.current.selectionStart;
+      const newValue = currentValue.slice(0, cursorPos - 1) + currentValue.slice(cursorPos);
+      setTypedText(newValue);
+      textareaRef.current.focus();
+    }
   };
 
   useEffect(() => {
@@ -56,10 +94,11 @@ function App() {
   useEffect(() => {
     if (isTimerRunning) {
       timerRef.current = setInterval(() => {
-        setTimeLeft((prevTime) => {
+        setTimeLeft(prevTime => {
           if (prevTime <= 0) {
             clearInterval(timerRef.current);
             setIsTimerRunning(false);
+            handleSubmit();
             return 0;
           }
           if (prevTime <= 300) {
@@ -83,7 +122,9 @@ function App() {
     <div className="App">
       <Toaster position="top-right" expand={true} richColors />
       <h1>Typing Practice</h1>
-      <div className="timer">Time Left: {formatTime(timeLeft)}</div>
+      <div className="timer">
+        Time Left: {formatTime(timeLeft)}
+      </div>
       <textarea
         placeholder="Enter up to 400 words here..."
         value={wordList}
@@ -96,6 +137,7 @@ function App() {
             <span
               key={index}
               className={wordStatus[index]}
+              style={{ color: wordStatus[index] === 'incorrect' ? 'red' : wordStatus[index] === 'correct' ? 'green' : 'black' }}
             >
               {word}{' '}
             </span>
@@ -107,8 +149,18 @@ function App() {
           value={typedText}
           onChange={handleTypingChange}
           ref={textareaRef}
+          onKeyDown={handleKeyDown}
         />
       </div>
+      <button onClick={handleSubmit} disabled={!isTimerRunning}>Submit</button>
+      {result !== null && (
+        <div className="result-modal">
+          <h2>Results</h2>
+          <p>Mismatched Words Count: {result.mismatchCount}</p>
+          <p>Spelling Mistakes Count: {result.spellingMistakeCount}</p>
+          <p>Time Taken: {formatTime(result.timeTaken)}</p>
+        </div>
+      )}
     </div>
   );
 }
