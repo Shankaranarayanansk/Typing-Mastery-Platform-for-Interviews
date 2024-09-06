@@ -89,70 +89,40 @@ button:disabled {
 }
 
 .text-to-type span {
-  transition: background-color 0.3s ease;
+  transition: color 0.3s ease;
 }
 
 .text-to-type span.correct {
-  background-color: var(--secondary-color);
-  color: white;
+  color: green;
+  font-weight: bold;
 }
 
 .text-to-type span.incorrect {
-  background-color: var(--accent-color);
-  color: white;
+  color: red;
+  font-weight: bold;
+
+}
+
+.text-to-type span.spelling-mistake {
+  color: orange;
+  font-weight: bold;
+
 }
 
 .typing-area {
   border: 1px solid var(--light-gray);
 }
 
-.result {
+.result-modal {
   margin-top: 30px;
   padding: 20px;
   background-color: #f0f0f0;
   border-radius: 4px;
 }
 
-.result h2 {
+.result-modal h2 {
   color: var(--primary-color);
   margin-bottom: 15px;
-}
-
-.result h3 {
-  color: var(--secondary-color);
-  margin-top: 20px;
-}
-
-.full-code-check {
-  margin-top: 20px;
-}
-
-.word-check {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 5px;
-  padding: 5px;
-  border-radius: 4px;
-}
-
-.word-check.correct {
-  background-color: rgba(46, 204, 113, 0.2);
-}
-
-.word-check.incorrect {
-  background-color: rgba(231, 76, 60, 0.2);
-}
-
-.word-check .original,
-.word-check .typed {
-  flex: 1;
-}
-.text-to-type span.correct {
-  color: green;
-}
-
-.text-to-type span.incorrect {
-  color: red;
 }
 
 /* Toaster customization */

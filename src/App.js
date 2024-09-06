@@ -27,10 +27,10 @@ function App() {
     setTypedText('');
     setWordStatus(new Array(words.split(' ').length).fill(''));
     setResult(null);
-    setTimeLeft(1200); // Reset timer
-    setIsTimerRunning(true); // Start timer
+    setTimeLeft(1200);  
+    setIsTimerRunning(true);  
     setTimeTaken(0);
-    setHasWarned(false); // Reset warning state
+    setHasWarned(false);  
   };
 
   const handleTypingChange = (e) => {
