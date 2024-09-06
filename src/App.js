@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { toast, Toaster } from 'sonner';
+import { useTheme } from './ThemeContext';
 import './App.css';
 
 function App() {
+  const { isDarkMode, toggleTheme } = useTheme();
   const [inputText, setInputText] = useState('');
   const [typedText, setTypedText] = useState('');
   const [wordList, setWordList] = useState('');
@@ -12,7 +14,7 @@ function App() {
   const [timeLeft, setTimeLeft] = useState(1200); // 20 minutes in seconds
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [timeTaken, setTimeTaken] = useState(0);
-  const [hasWarned, setHasWarned] = useState(false); // Track if 5-minute warning has been shown
+  const [hasWarned, setHasWarned] = useState(false);
   const textareaRef = useRef(null);
   const timerRef = useRef(null);
 
@@ -67,7 +69,7 @@ function App() {
       spellingMistakeCount,
       timeTaken: 1200 - timeLeft,
     });
-    setIsTimerRunning(false); // Stop timer
+    setIsTimerRunning(false);
   };
 
   const handlePaste = (e) => {
@@ -105,7 +107,7 @@ function App() {
           }
           if (prevTime <= 300 && !hasWarned) {
             toast.warning('Only 5 minutes left, hurry up!');
-            setHasWarned(true); // Ensure the warning is shown only once
+            setHasWarned(true);
           }
           return prevTime - 1;
         });
@@ -122,9 +124,12 @@ function App() {
   };
 
   return (
-    <div className="App">
+    <div className={`App ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
       <Toaster position="top-right" expand={true} richColors />
       <h1>Typing Practice</h1>
+      <button onClick={toggleTheme} className="theme-toggle" aria-label="Toggle theme">
+        <i className={`fas ${isDarkMode ? 'fa-sun' : 'fa-moon'}`}></i>
+      </button>
       <div className="timer">
         Time Left: {formatTime(timeLeft)}
       </div>
@@ -140,7 +145,6 @@ function App() {
             <span
               key={index}
               className={wordStatus[index]}
-              style={{ color: wordStatus[index] === 'incorrect' ? 'red' : wordStatus[index] === 'correct' ? 'green' : 'black' }}
             >
               {word}{' '}
             </span>

@@ -3,14 +3,21 @@
   --secondary-color: #2ecc71;
   --accent-color: #e74c3c;
   --background-color: #ecf0f1;
-  --text-color: #2c3e50;
+  --text-color: #000000;
   --light-gray: #bdc3c7;
+}
+
+.dark-mode {
+  --primary-color: #2980b9;
+  --secondary-color: #27ae60;
+  --accent-color: #c0392b;
+  --background-color: #000000;
+  --text-color: #ecf0f1;
+  --light-gray: #7f8c8d;
 }
 
 body {
   font-family: 'Arial', sans-serif;
-  background-color: var(--background-color);
-  color: var(--text-color);
   line-height: 1.6;
   padding: 20px;
   margin: 0;
@@ -19,10 +26,12 @@ body {
 .App {
   max-width: 1200px;
   margin: 0 auto;
-  background-color: white;
   padding: 30px;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background-color: var(--background-color);
+  color: var(--text-color);
+  transition: all 0.3s ease;
 }
 
 h1 {
@@ -46,6 +55,8 @@ textarea {
   border: 1px solid var(--light-gray);
   border-radius: 4px;
   resize: vertical;
+  background-color: var(--background-color);
+  color: var(--text-color);
 }
 
 button {
@@ -59,7 +70,7 @@ button {
 }
 
 button:hover {
-  background-color: #2980b9;
+  background-color: var(--secondary-color);
 }
 
 button:disabled {
@@ -82,10 +93,12 @@ button:disabled {
   padding: 15px;
   border-radius: 4px;
   line-height: 1.8;
+  background-color: var(--background-color);
+  color: var(--text-color);
 }
 
 .text-to-type {
-  background-color: #f9f9f9;
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 .text-to-type span {
@@ -93,20 +106,18 @@ button:disabled {
 }
 
 .text-to-type span.correct {
-  color: green;
+  color: var(--secondary-color);
   font-weight: bold;
 }
 
 .text-to-type span.incorrect {
-  color: red;
+  color: var(--accent-color);
   font-weight: bold;
-
 }
 
 .text-to-type span.spelling-mistake {
   color: orange;
   font-weight: bold;
-
 }
 
 .typing-area {
@@ -116,7 +127,7 @@ button:disabled {
 .result-modal {
   margin-top: 30px;
   padding: 20px;
-  background-color: #f0f0f0;
+  background-color: rgba(255, 255, 255, 0.1);
   border-radius: 4px;
 }
 
@@ -125,11 +136,31 @@ button:disabled {
   margin-bottom: 15px;
 }
 
-/* Toaster customization */
-:root {
-  --toaster-success-bg: var(--secondary-color);
-  --toaster-error-bg: var(--accent-color);
-  --toaster-warning-bg: #f39c12;
+.theme-toggle {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--text-color);
+  padding: 5px;
+  border-radius: 50%;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.theme-toggle:hover {
+  background-color: var(--primary-color);
+  color: rgb(255, 255, 255);
+}
+
+.theme-toggle i {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 @media (max-width: 768px) {
