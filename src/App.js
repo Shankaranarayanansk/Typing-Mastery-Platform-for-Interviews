@@ -41,20 +41,23 @@ function App() {
 
     const typedWords = text.split(/\s+/);
     const updatedStatus = wordArray.map((word, index) => {
-      if (typedWords[index] === word) return 'correct';
-      if (typedWords[index] !== undefined) {
-        if (typedWords[index].length === word.length) {
-          let mismatches = 0;
-          for (let i = 0; i < word.length; i++) {
-            if (typedWords[index][i] !== word[i]) {
-              mismatches++;
-            }
+      if (index >= typedWords.length) return '';
+      
+      const typedWord = typedWords[index];
+      if (typedWord === word) return 'correct';
+      
+      if (typedWord.length === word.length) {
+        let mismatches = 0;
+        for (let i = 0; i < word.length; i++) {
+          if (typedWord[i] !== word[i]) {
+            mismatches++;
           }
-          return mismatches > 2 ? 'incorrect' : 'spelling-mistake';
         }
-        return 'incorrect';
+        return mismatches > 2 ? 'incorrect' : 'spelling-mistake';
       }
-      return '';
+      
+      if (word.startsWith(typedWord)) return 'partial';
+      return 'incorrect';
     });
 
     setWordStatus(updatedStatus);
@@ -75,17 +78,6 @@ function App() {
   const handlePaste = (e) => {
     e.preventDefault();
     toast.error('Pasting text is disabled in this typing area.');
-  };
-
-  const handleKeyDown = (e) => {
-    if (e.key === 'Backspace') {
-      e.preventDefault();
-      const currentValue = textareaRef.current.value;
-      const cursorPos = textareaRef.current.selectionStart;
-      const newValue = currentValue.slice(0, cursorPos - 1) + currentValue.slice(cursorPos);
-      setTypedText(newValue);
-      textareaRef.current.focus();
-    }
   };
 
   useEffect(() => {
@@ -156,7 +148,6 @@ function App() {
           value={typedText}
           onChange={handleTypingChange}
           ref={textareaRef}
-          onKeyDown={handleKeyDown}
         />
       </div>
       <button onClick={handleSubmit} disabled={!isTimerRunning}>Submit</button>
